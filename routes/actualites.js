@@ -1,7 +1,6 @@
-const articles = await rssService.getAllArticles();
-res.json(articles);
+const express = require("express");
 const router = express.Router();
-const rssService = require("../services/rssService"); // notre module RSS
+const rssService = require("../services/rssService"); // notre module RSS réel
 
 router.get("/", async (req, res) => {
     try {
