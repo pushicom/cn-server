@@ -1,0 +1,7 @@
+{
+  "models": {
+    "image": "./models/stable-diffusion/",
+    "video": "./models/stable-video/"
+  },
+  "output": "./generated/"
+}
