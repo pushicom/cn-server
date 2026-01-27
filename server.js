@@ -29,7 +29,7 @@ app.listen(PORT, () => {
     console.log(`Serveur socle définitif en ligne sur le port ${PORT}`);
 });
 const openai = require("openai");
-openai.apiKey = ";
+openai.apiKey = "sk-proj-Q5YFXOwL9_MloOddDUz_SfYbiknxQhTlw4MlfZUloCl;
 
 app.post("/generate_image", async (req, res) => {
     const { prompt } = req.body;
