@@ -28,3 +28,19 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Serveur socle définitif en ligne sur le port ${PORT}`);
 });
+const openai = require("openai");
+openai.apiKey = ";
+
+app.post("/generate_image", async (req, res) => {
+    const { prompt } = req.body;
+    try {
+        const response = await openai.images.generate({
+            prompt: prompt,
+            n: 1,
+            size: "1024x1024"
+        });
+        res.json({ image_url: response.data[0].url });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
