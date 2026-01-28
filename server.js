@@ -9,7 +9,7 @@ async function generateAIImage(prompt) {
   container.innerText = "Génération en cours...";
 
   try {
-    const response = await fetch("https://cn-server-u7ps.onrender.com/generate-image", {
+    const response = await fetch("https://TON-SERVICE.onrender.com/generate-image", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt: prompt })
