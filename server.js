@@ -1,55 +1,45 @@
-const express = require("express");
-const cors = require("cors");
-const OpenAI = require("openai");
+<div id="ai-image-container">Génération en cours...</div>
 
-const app = express();
+<input type="text" id="ai-prompt" placeholder="Écris ton prompt ici" style="width: 80%; padding:5px; margin-top:10px;">
+<button id="ai-generate" style="padding:5px 10px; margin-left:5px;">Générer image</button>
 
-// ==== CORS ====
-app.use(cors({
-  origin: ["https://connaissancecom.net", "https://www.connaissancecom.net"] // remplace si nécessaire
-}));
+<script>
+async function generateAIImage(prompt) {
+  const container = document.getElementById("ai-image-container");
+  container.innerText = "Génération en cours...";
 
-app.use(express.json());
-
-// ===== OpenAI =====
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
-
-// === ROUTE TEST ===
-app.get("/test", (req, res) => {
-  res.json({ message: "Serveur définitif opérationnel ✅" });
-});
-
-// === IA : GENERATION IMAGE ===
-app.post("/generate-image", async (req, res) => {
   try {
-    const { prompt } = req.body;
-
-    if (!prompt) {
-      return res.status(400).json({ error: "Prompt manquant" });
-    }
-
-    const result = await openai.images.generate({
-      model: "gpt-image-1",
-      prompt: prompt,
-      size: "512x512" // plus rapide et fiable
+    const response = await fetch("https://cn-server-u7ps.onrender.com/generate-image", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: prompt })
     });
 
-    if (!result.data || !result.data[0] || !result.data[0].url) {
-      return res.status(500).json({ error: "Aucune image générée" });
+    const data = await response.json();
+
+    if (data.image_url) {
+      const img = document.createElement("img");
+      img.src = data.image_url;
+      img.alt = "Image générée par IA";
+      img.style.maxWidth = "100%";
+      container.innerHTML = "";
+      container.appendChild(img);
+    } else {
+      container.innerText = "Aucune image générée.";
     }
+  } catch (err) {
+    console.error(err);
+    container.innerText = "Erreur génération image";
+  }
+}
 
-    res.json({ image_url: result.data[0].url });
-
-  } catch (error) {
-    console.error("Erreur OpenAI:", error);
-    res.status(500).json({ error: "Erreur génération image" });
+// bouton générer
+document.getElementById("ai-generate").addEventListener("click", function() {
+  const prompt = document.getElementById("ai-prompt").value;
+  if(prompt.trim() !== "") {
+    generateAIImage(prompt);
+  } else {
+    alert("Écris un prompt pour générer l'image !");
   }
 });
-
-// === LANCEMENT SERVEUR ===
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Serveur définitif en ligne sur le port ${PORT}`);
-});
+</script>
