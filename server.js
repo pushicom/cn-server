@@ -6,7 +6,7 @@ const app = express();
 
 // ==== CORS ====
 app.use(cors({
-  origin: "https://connaissancecom.net" // remplace par ton domaine exact
+  origin: ["https://connaissancecom.net", "https://www.connaissancecom.net"] // remplace si nécessaire
 }));
 
 app.use(express.json());
@@ -21,14 +21,6 @@ app.get("/test", (req, res) => {
   res.json({ message: "Serveur définitif opérationnel ✅" });
 });
 
-// === ROUTE ACTUALITES EXEMPLE ===
-app.get("/actualites", (req, res) => {
-  res.json([
-    { titre: "Titre test 1", resume: "Résumé test 1", lien: "https://example.com/1" },
-    { titre: "Titre test 2", resume: "Résumé test 2", lien: "https://example.com/2" }
-  ]);
-});
-
 // === IA : GENERATION IMAGE ===
 app.post("/generate-image", async (req, res) => {
   try {
@@ -41,12 +33,14 @@ app.post("/generate-image", async (req, res) => {
     const result = await openai.images.generate({
       model: "gpt-image-1",
       prompt: prompt,
-      size: "1024x1024"
+      size: "512x512" // plus rapide et fiable
     });
 
-    res.json({
-      image_url: result.data[0].url
-    });
+    if (!result.data || !result.data[0] || !result.data[0].url) {
+      return res.status(500).json({ error: "Aucune image générée" });
+    }
+
+    res.json({ image_url: result.data[0].url });
 
   } catch (error) {
     console.error("Erreur OpenAI:", error);
@@ -57,5 +51,5 @@ app.post("/generate-image", async (req, res) => {
 // === LANCEMENT SERVEUR ===
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Serveur socle définitif en ligne sur le port ${PORT}`);
+  console.log(`Serveur définitif en ligne sur le port ${PORT}`);
 });
