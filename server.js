@@ -3,7 +3,12 @@ const cors = require("cors");
 const OpenAI = require("openai");
 
 const app = express();
-app.use(cors());
+
+// ==== CORS ====
+app.use(cors({
+  origin: "https://connaissancecom.net" // remplace par ton domaine exact
+}));
+
 app.use(express.json());
 
 // ===== OpenAI =====
@@ -44,7 +49,7 @@ app.post("/generate-image", async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("Erreur OpenAI:", error);
     res.status(500).json({ error: "Erreur génération image" });
   }
 });
